@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buena Pizza | Pide en línea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">  <link rel="stylesheet" href="css/cliente.css">
+  <script src="js/cliente.js" defer></script>
+</head>
+<body>
+  <header class="encabezado">
+    <div class="topbar">
+      <button class="logo" data-vista="menu"><span aria-hidden="true">🍕</span>Buena Pizza</button>
+      <nav class="tabs" aria-label="Secciones">
+        <button class="tab activa" data-vista="menu">Menú</button>
+        <button class="tab" data-vista="carrito">Mi ticket <span class="badge" id="contador">0</span></button>
+        <button class="tab" data-vista="estado">Rastrear pedido</button>
+      </nav>
+    </div>
+    <div class="toldo"></div>
+  </header>
+
+  <main>
+    <!-- VISTA 1: MENÚ -->
+    <section class="vista" id="vista-menu">
+      <div class="portada">
+        <div class="pizarra">
+          <h2>¡Pizza recién<br>salida del horno!</h2>
+          <p>Elige tus pizzas, paga como prefieras y mira cómo avanza tu pedido.</p>
+          <button class="btn" data-vista="estado">Rastrear mi pedido</button>
+        </div>
+        <div class="tabla-madera"><div id="heroPizza"></div></div>
+      </div>
+
+      <div class="contenedor">
+        <div class="cupon-banner">
+          <span class="cupon-icono" aria-hidden="true">🎟️</span>
+          <div>
+            <h3>¡Oferta del día!</h3>
+            <p>Usa el código <strong>PIZZA20</strong> y llévate 20% de descuento al pagar.</p>
+          </div>
+        </div>
+        <h2 class="rotulo">Menú del horno</h2>
+        <div id="menu" class="grid-pizzas"></div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: TICKET Y PAGO -->
+    <section class="vista contenedor" id="vista-carrito" hidden>
+      <h2 class="rotulo">Mi ticket</h2>
+      <div class="grid-pago">
+        <div class="ticket-wrap">
+          <aside class="ticket">
+            <h3 class="titulo-caja">Tu comanda</h3>
+            <ul id="resumen" class="resumen-lista"></ul>
+            <div class="totales">
+              <div class="fila-total"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+              <div class="fila-total descuento-fila" id="fila-descuento" hidden>
+                <span>Descuento</span><span id="descuento-aplicado">-$0.00</span>
+              </div>
+              <div class="fila-total gran-total"><span>Total</span><span id="total-final">$0.00</span></div>
+            </div>
+            <button class="btn-agregar ancho" data-vista="menu">Agregar más pizzas</button>
+          </aside>
+        </div>
+
+        <div class="hoja">
+          <h3 class="titulo-caja">Detalles de pago</h3>
+          <form id="formPedido" class="formulario-pago">
+            <div class="input-grupo">
+              <label for="cliente">Nombre para recoger</label>
+              <input id="cliente" required minlength="3" maxlength="60" placeholder="Ej. Gabriel">
+            </div>
+            <div class="input-grupo">
+              <label for="codigo">Cupón de descuento (opcional)</label>
+              <div class="cupon-grupo">
+                <input id="codigo" placeholder="Ej. PIZZA20">
+                <button type="button" id="btnAplicarCupon" class="btn-cupon">Aplicar</button>
+              </div>
+            </div>
+            <div class="input-grupo">
+              <label for="metodoPago">Método de pago</label>
+              <select id="metodoPago" required></select>
+            </div>
+            <button type="submit" class="btn-pagar" id="btnPagar">Confirmar y pagar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 3: RASTREO -->
+    <section class="vista contenedor" id="vista-estado" hidden>
+      <h2 class="rotulo">Rastrea tu pizza</h2>
+      <div class="ticket-wrap angosto">
+        <div class="ticket">
+          <form id="formRastreo" class="buscador-estado">
+            <input id="folioBuscar" type="text" required placeholder="Tu No. de pedido (Ej. PED-1050)" aria-label="Número de pedido">
+            <button type="submit" class="btn">Buscar</button>
+          </form>
+
+          <p id="msgEstadoError" class="msg-error" hidden></p>
+
+          <div id="infoPedidoBox" hidden>
+            <div class="info-cabecera">
+              <h3 id="estadoFolio"></h3>
+              <span id="estadoCliente" class="badge-cliente"></span>
+            </div>
+            <p id="estadoDetalle" class="detalle-txt"></p>
+            <div class="barra-progreso-fondo"><div class="barra-progreso-relleno" id="barra"></div></div>
+            <div class="pasos-iconos" id="pasos">
+              <div class="paso"><i>👨‍🍳</i>Preparando</div>
+              <div class="paso"><i>🔥</i>En el horno</div>
+              <div class="paso"><i>🍕</i>Listo en mostrador</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BARRA FLOTANTE -->
+  <div class="carrito-barra" id="carritoBarra" hidden>
+    <span>🛒 <b id="barraCant">0</b> pizzas · <b id="barraTotal">$0.00</b></span>
+    <button class="btn-agregar" data-vista="carrito">Ver mi ticket</button>
+  </div>
+
+  <!-- MODAL DE PROCESANDO -->
+  <div id="modalProcesando" class="modal-overlay" hidden>
+    <div class="modal-box">
+      <div class="spinner"></div>
+      <h3 id="modalTexto">Procesando pago de forma segura...</h3>
+    </div>
+  </div>
+</body>
+</html>
